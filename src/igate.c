@@ -11,6 +11,12 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+/*
+
+BootROM -> LLB -> iBoot -> SEP -> Kernel -> Applications
+
+*/
+
 #define VENDOR_ID       (int)0x05AC
 #define NORM_MODE       (int)0x1290 // Normal Mode
 #define RECV_MODE       (int)0x1281 // Recovery Mode
