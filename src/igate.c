@@ -26,7 +26,7 @@ BootROM -> LLB -> iBoot -> SEP -> Kernel -> Applications
 
 #define CMD_LOG	".orbit_history" /* history file for readline/history.h */
 
-struct libusb_device_handle *device == NULL; /* initalize device variable with NULL value */
+struct libusb_device_handle *device = NULL; /* initalize device variable with NULL value */
 
 void show_commands(bool is_global)
 {
