@@ -61,7 +61,7 @@ void connect() {
     }
 }
 
-void close() {
+void disconnect() {
     if (device != NULL) {
 	libusb_close(device);
     }
