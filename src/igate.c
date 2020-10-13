@@ -34,7 +34,8 @@ void show_commands(bool is_global)
     else printf("  reboot  Reboot iDevice.\n  go <address>  Jump to the specified memory address.\n help  Show available commands.\n");
 }
 
-int send_command(char* command) {
+int send_command(char* argv[]) {
+    char* command = argv[0];
     size_t length = strlen(command);
 
     if (length >= 0x200) {
