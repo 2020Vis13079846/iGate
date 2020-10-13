@@ -8,5 +8,6 @@ iGate is a powerful, simple and multi-functional toolkit for interacting with iB
 
 ```
 Usage: igate [option] <arguments>
+
   -s, --shell  Interact with iDevice.
 ```
