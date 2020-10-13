@@ -75,10 +75,69 @@ void reset() {
     }
 }
 
+int shell() {
+    if (libusb_set_configuration(device, 1) < 0) {	
+	return 101; // setting consiguration error
+    }
+	
+    if (libusb_claim_interface(device, 1) < 0) {
+	return 102; // interface error
+    }
+	
+    if (libusb_set_interface_alt_setting(device, 1, 1) < 0) {
+	return 103; // alt interface error
+    }
+	
+    char* buffer = malloc(BUF_SIZE);
+    if (buffer == NULL) {
+	return 104; // memory allocation error
+    }
+	
+    FILE* fd = NULL;
+    for (;;) {	
+	int bytes = 0;
+	memset(buffer, 0, BUF_SIZE);
+	libusb_bulk_transfer(device, 0x81, buffer, BUF_SIZE, &bytes, 500);
+		
+	if (bytes > 0) {
+	    int i;
+            for(i = 0; i < bytes; ++i) {
+		fprintf(stdout, "%c", buffer[i]);
+		if (fd) fprintf(fd, "%c", buffer[i]);
+	    }
+	}
+	char *command = readline("(console)> ");
+		
+	if (command != NULL) {
+	    add_history(command);
+	    if (fd) fprintf(fd, ">%s\n", command);
+	    send_command(&command);
+				
+	    char* action = strtok(strdup(command), " ");
+	    if (! strcmp(action, "getenv")) {
+	        char response[0x200];
+		libusb_control_transfer(device, 0xC0, 0, 0, 0, response, 0x200, 1000);
+		printf("%s\r\n", response);		
+	    }
+				
+	    if (! strcmp(action, "reboot") || ! strcmp(action, "poweroff"))
+		return 105; // terminated
+	}	
+    }	
+    free(command);
+    return 100; // okk
+}
+	
+	
+	free(buffer);
+	if(fd) fclose(fd);
+	libusb_release_interface(device, 1);
+}
+
 int main(int argc, char *argv[])
 {
     if (argc > 2) {
-        if (strcmp(argv[1], "-s") == 0 || strcmp(argv[1], "--shell") == 0) {
+        if (! strcmp(argv[1], "-s") || ! strcmp(argv[1], "--shell")) {
             libusb_init(NULL);
             connect();
             shell();
