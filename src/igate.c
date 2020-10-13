@@ -1,3 +1,5 @@
+// Based on libusb 1.0 and Chronic Dev Team work
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
