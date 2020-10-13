@@ -22,7 +22,7 @@ struct libusb_device_handle *device == NULL; /* initalize device variable with N
 
 void show_commands(bool is_global)
 {
-    if (is_global) printf("Usage: orbit [option] <argumants>\n  -s, --shell  Start interaction with iBoot/iBSS shell.\n");
+    if (is_global) printf("Usage: orbit [option] <argumants>\n  -s, --shell  Interact with iDevice.\n");
     else printf("  reboot  Reboot iDevice.\n  go <address>  Jump to the specified memory address.\n help  Show available commands.\n");
 }
 
