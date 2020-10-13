@@ -11,3 +11,11 @@ Usage: igate [option] <arguments>
 
   -s, --shell  Interact with iDevice.
 ```
+
+## Authors
+
+* Ivan Nikolsky (@enty8080) - Main developer
+
+## Acknowledgments
+
+* [The iPhone Wiki](https://www.theiphonewiki.com/)
