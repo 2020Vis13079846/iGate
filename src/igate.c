@@ -123,15 +123,12 @@ int shell() {
 	    if (! strcmp(action, "reboot") || ! strcmp(action, "poweroff"))
 		return 105; // terminated
 	}	
-    }	
-    free(command);
+        free(command);
+    }
+    free(buffer);
+    if (fd) fclose(fd);
+    libusb_release_interface(device, 1);
     return 100; // okk
-}
-	
-	
-	free(buffer);
-	if(fd) fclose(fd);
-	libusb_release_interface(device, 1);
 }
 
 int main(int argc, char *argv[])
