@@ -27,25 +27,26 @@ void show_commands(bool is_global)
 }
 
 void connect() {
-	if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, RECV_MODE)) == NULL) {
-		if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, WTF_MODE)) == NULL) {
-			if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, DFU_MODE)) == NULL) {
-			}
-		}
+    if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, RECV_MODE)) == NULL) {
+	if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, WTF_MODE)) == NULL) {
+	    if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, DFU_MODE)) == NULL) {
+		__asm__("nop");
+	    }
 	}
+    }
 }
 
 void close() {
-	if (device != NULL) {
-		libusb_close(device);
-	}
+    if (device != NULL) {
+	libusb_close(device);
+    }
 }
 
 // DANGEROUS: Do not use on new iPhones (only iPhone Original - iPhone 3GS)
 
 void reset() {
-	if (device != NULL) {
-		libusb_reset_device(device);
+    if (device != NULL) {
+	libusb_reset_device(device);
     }
 }
 
