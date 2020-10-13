@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
 
 #include <libusb-1.0/libusb.h>
@@ -12,9 +11,7 @@
 #include <readline/history.h>
 
 /*
-
 BootROM -> LLB -> iBoot -> SEP -> Kernel -> Applications
-
 */
 
 #define VENDOR_ID       (int)0x05AC
@@ -34,25 +31,25 @@ void show_commands(bool is_global)
     else printf("  reboot  Reboot iDevice.\n  go <address>  Jump to the specified memory address.\n help  Show available commands.\n");
 }
 
-int send_command(char* argv[]) {
-    char* command = argv[0];
+int send_command(char* command) 
+{
     size_t length = strlen(command);
 
     if (length >= 0x200) {
-	return false;
+	return 0;
     }
 
     /* now check succeed or not */
 	
     if (! libusb_control_transfer(device, 0x40, 0, 0, 0, command, (length + 1), 1000)) {
-	return false;
+	printf("Failed to execute command!\n")
     }
 
-    // okk
-    return true;
+    return 1
 }
 
-void connect() {
+void connect() 
+{
     if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, RECV_MODE)) == NULL) {
 	if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, WTF_MODE)) == NULL) {
 	    if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, DFU_MODE)) == NULL) {
@@ -62,7 +59,8 @@ void connect() {
     }
 }
 
-void disconnect() {
+void disconnect() 
+{
     if (device != NULL) {
 	libusb_close(device);
     }
@@ -70,13 +68,15 @@ void disconnect() {
 
 // DANGEROUS: Do not use on new iPhones (only iPhone Original - iPhone 3GS)
 
-void reset() {
+void reset() 
+{
     if (device != NULL) {
 	libusb_reset_device(device);
     }
 }
 
-int shell() {
+int shell() 
+{
     if (libusb_set_configuration(device, 1) < 0) {	
 	return 101; // setting consiguration error
     }
@@ -112,7 +112,16 @@ int shell() {
 	if (command != NULL) {
 	    add_history(command);
 	    if (fd) fprintf(fd, ">%s\n", command);
-	    send_command(&command);
+	    char* cmd = &command[0];
+            size_t length = strlen(command);
+
+     	    if (length >= 0x200) {
+		printf("Failed to execute command!\n");
+    	    }
+	
+    	    if (! libusb_control_transfer(device, 0x40, 0, 0, 0, command, (length + 1), 1000)) {
+		printf("Failed to execute command!\n");
+    	    }
 				
 	    char* action = strtok(strdup(command), " ");
 	    if (! strcmp(action, "getenv")) {
@@ -121,8 +130,7 @@ int shell() {
 		printf("%s\r\n", response);		
 	    }
 				
-	    if (! strcmp(action, "reboot") || ! strcmp(action, "poweroff"))
-		return 105; // terminated
+	    if (! strcmp(action, "reboot") || ! strcmp(action, "poweroff")) return 105; // terminated
 	}	
         free(command);
     }
@@ -132,13 +140,19 @@ int shell() {
     return 100; // okk
 }
 
+void init() 
+{
+    libusb_init(NULL);
+}
+
 int main(int argc, char *argv[])
 {
     if (argc >= 2) {
         if (! strcmp(argv[1], "-s") || ! strcmp(argv[1], "--shell")) {
-            libusb_init(NULL);
+            init();
             connect();
             shell();
+	    disconnect();
         } else show_commands(true);
     } else show_commands(true);
 }
