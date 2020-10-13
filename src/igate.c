@@ -26,11 +26,28 @@ void show_commands(bool is_global)
     else printf("  reboot  Reboot iDevice.\n  go <address>  Jump to the specified memory address.\n help  Show available commands.\n");
 }
 
+int send_command(char* command) {
+    size_t length = strlen(command);
+
+    if (length >= 0x200) {
+	return false;
+    }
+
+    /* now check succeed or not */
+	
+    if (! libusb_control_transfer(device, 0x40, 0, 0, 0, command, (length + 1), 1000)) {
+	return false;
+    }
+
+    // okk
+    return true;
+}
+
 void connect() {
     if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, RECV_MODE)) == NULL) {
 	if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, WTF_MODE)) == NULL) {
 	    if ((device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, DFU_MODE)) == NULL) {
-		__asm__("nop");
+		__asm__("nop"); // do nothing
 	    }
 	}
     }
