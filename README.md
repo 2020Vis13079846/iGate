@@ -6,6 +6,8 @@
 
 iGate is a powerful, simple and multi-functional toolkit for interacting with iBoot.
 
+## Usage
+
 ```
 Usage: igate [option] <arguments>
 
